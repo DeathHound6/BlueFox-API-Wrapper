@@ -1,0 +1,25 @@
+{
+  "name": "bluefox-api-wrapper",
+  "version": "0.0.1",
+  "description": "A module to interact easily with the BlueFoxHost API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test/index.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "repository": {
+    "url": "https://github.com/DeathHound6/BlueFox-API-Wrapper"
+  },
+  "license": "MIT",
+  "keywords": [
+    "BlueFoxHost",
+    "API",
+    "API wrapper"
+  ]
+}
