@@ -1,17 +1,15 @@
 # BlueFox API Wrapper
 
 ```js
-const BlueFox = new (require("bluefox-api-wrapper"))("myServerID", "myApiToken");
+const wrapper = require("bluefox-panel-api-wrapper");
+const BlueFox = new wrapper("myApiToken");
 
-// attempt to start the server
-BlueFox.start().catch(console.error);
+async function myFunction() {
+  const myServer = await BlueFox.getServer("myServerID");
 
-// attempt to stop the server
-BlueFox.stop().catch(console.error);
-
-// attempt to restart the server
-BlueFox.restart().catch(console.error);
-
-// attempt to kill the server
-BlueFox.kill().catch(console.error);
+  // attempt to start the server
+  // available options are `start`, `stop`, `kill` and `restart`
+  await myServer.power("start");
+}
+myFunction();
 ```

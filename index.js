@@ -1,107 +1,39 @@
-const fetch = require("node-fetch");
+const Server = require("./server.js");
+const API = require("./api.js");
 
 /**
- * The class to easily interact with BlueFoxHost API
- */
+ * A class that represents the Client User 
+ */ 
 class BlueFox {
   /**
-   * @param {String} serverID The ID for the server to change power state for
-   * @param {String} apiToken The token for a user or subuser for this server
+   * @param {String} apiToken Your API Token
    */
-  constructor(serverID = "", apiToken = "") {
-    if (typeof serverID != "string")
-      throw new TypeError("Server ID must be a string");
+  constructor(apiToken = "") {
     if (typeof apiToken != "string")
-      throw new TypeError("API Token must be a string");
+      throw new TypeError("API Token must be String");
+    Object.defineProperty(this, "token", { value: apiToken, writable: false });
 
-    fetch(`https://panel.bluefoxhost.com/api/client/servers/${serverID}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${apiToken}` }
-    }).catch(err => {
-      throw new Error("No server with the provided ID exists");
-    });
-    this.server = serverID;
-    this.token = apiToken;
+    /**
+     * Access to the interaction methods with BlueFox Panel API
+     * @type {API}
+     * @private
+     */
+    this._api = new API(this);
+  }
+  get token() {
+    return this.token;
   }
 
   /**
-   * Start the server using the ID provided
-   * @returns {Promise<Boolean>}
+   * Create a new instance of a BlueFox Panel Server
+   * @param {String} id The ID of the server to get
+   * @returns {Promise<Server>}
    */
-  async start() {
-    await fetch(
-      `https://panel.bluefoxhost.com/api/client/servers/${this.server}/power`,
-      {
-        method: "POST",
-        body: JSON.stringify({ signal: "start" }),
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      }
-    );
-    return true;
-  }
-
-  /**
-   * Stop the server using the ID provided
-   * @returns {Promise<Boolean>}
-   */
-  async stop() {
-    await fetch(
-      `https://panel.bluefoxhost.com/api/client/servers/${this.server}/power`,
-      {
-        method: "POST",
-        body: JSON.stringify({ signal: "stop" }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.token}`
-        }
-      }
-    );
-    return true;
-  }
-
-  /**
-   * Kill the server using the ID provided
-   * @returns {Promise<Boolean>}
-   */
-  async kill() {
-    await fetch(
-      `https://panel.bluefoxhost.com/api/client/servers/${this.server}/power`,
-      {
-        method: "POST",
-        body: JSON.stringify({ signal: "kill" }),
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json"
-        }
-      }
-    );
-    return true;
-  }
-
-  /**
-   * Restart the server using the ID provided
-   * @returns {Promise<Boolean>}
-   */
-  async restart() {
-    await fetch(
-      `https://panel.bluefoxhost.com/api/client/servers/${this.server}/power`,
-      {
-        method: "POST",
-        body: JSON.stringify({ signal: "restart" }),
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.token}`
-        }
-      }
-    );
-    return true;
+  async getServer(id) {
+    if (typeof id != "string") throw new TypeError("Server ID must be String");
+    if ((await this._api.serverExists(id)).code != 204)
+      throw new Error("A server with that id does not exist");
+    return new Server(this, id);
   }
 }
 
