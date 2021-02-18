@@ -1,7 +1,7 @@
 {
-  "name": "bluefox-api-wrapper",
-  "version": "0.0.1",
-  "description": "A module to interact easily with the BlueFoxHost API",
+  "name": "bluefox-panel-api-wrapper",
+  "version": "0.1.0",
+  "description": "A module to interact easily with the BlueFoxHost Panel API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
